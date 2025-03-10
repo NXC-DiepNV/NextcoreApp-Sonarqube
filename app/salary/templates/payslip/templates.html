@@ -1,0 +1,423 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>
+        Payslip - {{ data["date"] }}
+    </title>
+    <style>
+        @page {
+            size: A4 landscape; /* Set the page size to A4 and orientation to landscape */
+            margin: 1in; /* Optional: set margins */
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #000;
+            font-size: 12pt;
+        }
+        .container {
+            width: 95%;
+            margin: 0 0;
+            padding: 5px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+        .header img {
+            width: 150px;
+            margin-right: 20px;
+        }
+        .header .title {
+            text-align: right;
+        }
+        .header .title h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        .header .title h2 {
+            font-size: 18px;
+            margin: 0;
+        }
+        .info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .info .column {
+            width: 48%;
+        }
+        .info p {
+            margin: 5px 0;
+        }
+        .info p span {
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #000;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .section-title {
+            background-color: #d9e1f2;
+            font-weight: bold;
+        }
+        .total {
+            font-weight: bold;
+        }
+        .notes {
+            margin-top: 20px;
+        }
+        .notes p {
+            margin: 5px 0;
+        }
+        .notes a {
+            color: #0000ff;
+            text-decoration: none;
+        }
+        .notes a:hover {
+            text-decoration: underline;
+        }
+        .vertical-table {
+            width: 100%;
+        }
+        .vertical-table th {
+            width: 40%;
+        }
+        .underline {
+            text-decoration: underline;
+        }
+        .center {
+            text-align: center;
+            text-decoration: italic;
+        }
+        .salary-details th {
+            text-align: center;
+        }
+        
+        .salary-details td:first-child,
+        .salary-details td:nth-child(3) {
+            text-align: center; /* Centers text horizontally */
+            vertical-align: middle; /* Centers text vertically */
+        }
+
+        .salary-details td:last-child {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <img alt="Nextcore Logo" height="225" src="file:///{{ logo }}" width="500"/>
+        <div class="title">
+            <h1>
+                Phiếu Lương – Tháng {{ data["date"] }}
+            </h1>
+        </div>
+    </div>
+    <h2> I. Thông tin nhân viên </h2>
+    <table class="vertical-table">
+        <tr>
+            <th>1. Họ và tên:</th>
+            <td>{{ data["full_name"] }}</td>
+        </tr>
+        <tr>
+            <th>2. Vai trò:</th>
+            <td>{{ data["role"] }}</td>
+        </tr>
+        <tr>
+            <th>3. Số điện thoại</th>
+            <td>{{ data["user_phone"] }}</td>
+        </tr>
+        <tr>
+            <th>4. Lương cơ bản</th>
+            <td>{{ data["salary_basic"] | vnd }}</td>
+        </tr>
+    </table>
+    <h2> II. Số liệu tháng {{ data["date"] }} </h2>
+    <table class="vertical-table">
+        <tr>
+            <th>5. Số ngày làm việc trong tháng: </th>
+            <td>{{ data["working_day"] | int_priority }}</td>
+        </tr>
+        <tr>
+            <th>6. Số ngày làm việc thực tế:</th>
+            <td>{{ data["working_days_month"] | int_priority }}</td>
+        </tr>
+        <tr>
+            <th>7. Làm thêm giờ thực tế</th>
+            <td>{{ data["actual_ot"] | int_priority }} </td>
+        </tr>
+        <tr>
+            <th>8. Làm thêm giờ hệ số</th>
+            <td>{{ data["coefficient_ot"] | int_priority }}</td>
+        </tr>
+        <tr>
+            <th>9. Phép (tháng này / đã nghỉ / tối đa)</th>
+            <td>{{ data["take_leave_month"] | int_priority }} / {{ data["number_days_off"] | int_priority }} / {{ data["maximum_leave"] | int_priority }}</td>
+        </tr>
+    </table>
+    <h2>III. Lương chi tiết</h2>
+    <table class="salary-details">
+        <thead>
+        <tr>
+            <th>
+                STT
+            </th>
+            <th>
+                Mục
+            </th>
+            <th>
+                [No .]
+            </th>
+            <th>
+                Công thức
+            </th>
+            <th>
+                Tiền
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="section-title">
+            <td>A.</td>
+            <td>Tổng thu nhập</td>
+            <td>10</td>
+            <td>[11] + [12] + [15] + [21]</td>
+            <td>{{ data["total_income"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Lương ngày công 100%</td>
+            <td>11</td>
+            <td>[4] / [5] * [6]</td>
+            <td>{{ data["daily_wage"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Phụ cấp (không tính thuế)</td>
+            <td>12</td>
+            <td>[13] + [14]</td>
+            <td>{{ data["allowances_excluding_tax"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>2.1 Trang phục</td>
+            <td>13</td>
+            <td>415,000/[5]*[6]</td>
+            <td>{{ data["skin"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>2.2 Ăn trưa</td>
+            <td>14</td>
+            <td>730,000/[5]*[6]</td>
+            <td>{{ data["having_lunch"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Phụ cấp (tính thuế)</td>
+            <td>15</td>
+            <td>[16] + [17] + [18] + [19] + [20]</td>
+            <td>{{ data["allowances_taxable"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>3.1 Nhà</td>
+            <td>16</td>
+            <td></td>
+            <td>{{ data["allowance_housing"] | vnd }}</td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td>3.2 Điện thoại</td>
+            <td>17</td>
+            <td></td>
+            <td>{{ data["allowance_phone"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>3.3 Xăng xe</td>
+            <td>18</td>
+            <td></td>
+            <td>{{ data["allowance_fuel"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>3.4 Trách nhiệm</td>
+            <td>19</td>
+            <td></td>
+            <td>{{ data["allowance_responsibility"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>3.5 Thưởng KPI</td>
+            <td>20</td>
+            <td></td>
+            <td>{{ data["bonus_kpi"] | vnd }}</td>
+        </tr>
+
+        <tr>
+            <td>4</td>
+            <td>Làm thêm giờ</td>
+            <td>21</td>
+            <td>[22] + [23]</td>
+            <td>{{ data["overtime"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>4.1 Làm thêm giờ (tính thuế)</td>
+            <td>22</td>
+            <td></td>
+            <td>{{ data["overtime_taxable"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>4.2 Làm thêm giờ (không thuế)</td>
+            <td>23</td>
+            <td></td>
+            <td>{{ data["overtime_non_taxable"] | vnd }}</td>
+        </tr>
+        <tr class="section-title">
+            <td>B.</td>
+            <td>Bảo hiểm</td>
+            <td>24</td>
+            <td>[25] + [26] + [27]</td>
+            <td>{{ data["count_employee_insurance"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Bảo hiểm xã hội</td>
+            <td>25</td>
+            <td>[4] * 8%</td>
+            <td>{{ data["employee_insurance_social"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Bảo hiểm y tế</td>
+            <td>26</td>
+            <td>[4] * 1.5%</td>
+            <td>{{ data["employee_insurance_health"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Bảo hiểm thất nghiệp</td>
+            <td>27</td>
+            <td>[4] * 1%</td>
+            <td>{{ data["employee_insurance_unemployment"] | vnd }}</td>
+        </tr>
+        <tr class="section-title">
+            <td>C.</td>
+            <td>Thuế thu nhập cá nhân (*)</td>
+            <td>28</td>
+            <td></td>
+            <td>{{ data["personal_income_tax"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Thu nhập chịu thuế</td>
+            <td>29</td>
+            <td>[11] + [15] + [22]</td>
+            <td>{{ data["taxable_earnings"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Người phụ thuộc</td>
+            <td>30</td>
+            <td></td>
+            <td>{{ data["dependent"]}}</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Thu nhâp tính thuế</td>
+            <td>31</td>
+            <td>MAX(0, [29] - [24] - 11,000,000 - ([30] * 4,400,000))</td>
+            <td>{{ data["taxable_income"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Thuế TNCN nộp thiếu/nộp thừa (nếu có)</td>
+            <td>32</td>
+            <td></td>
+            <td>{{ data["tax_underpaid_or_overpaid"] | vnd }}</td>
+        </tr>
+        <tr class="section-title">
+            <td>E.</td>
+            <td>Thu nhập / Khấu trừ khác</td>
+            <td>33</td>
+            <td>[34] - [35] + [36]</td>
+            <td>{{ data["count_other_income"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Thu nhập tăng thêm</td>
+            <td>34</td>
+            <td></td>
+            <td>{{ data["income_additional"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Khấu trừ thu nhập</td>
+            <td>35</td>
+            <td></td>
+            <td>{{ data["income_deduction"] | vnd }}</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Khác</td>
+            <td>36</td>
+            <td></td>
+            <td>{{ data["other"] | vnd }}</td>
+        </tr>
+        <tr class="section-title">
+            <td>F.</td>
+            <td>Thu nhập thực tế</td>
+            <td>37</td>
+            <td>[10] - [24] - [28] + [33]</td>
+            <td>{{ data["actual_income"] | vnd }}</td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>IV. Thông tin nhận lương</h2>
+    <table class="vertical-table">
+        <tr>
+            <th>Số tài khoản: </th>
+            <td>{{ data["bank_number_id"] }}</td>
+        </tr>
+        <tr>
+            <th>Ngân hàng:</th>
+            <td>{{ data["bank_name"] }}</td>
+        </tr>
+        <tr>
+            <th>Người thụ hưởng: </th>
+            <td>{{ data["bank_beneficiary"] }} </td>
+        </tr>
+    </table>
+    <h2 class="underline">Notes</h2>
+    <ul>
+<!--        <li>Kiểm tra giờ làm thêm <a href="#">tại đây</a> </li>-->
+        <li>Kiểm tra quy định về trả lương làm thêm giờ <a href="https://nextcore.sg.larksuite.com/docx/RvMJdEATOo7iusxsW7ulb5crgpg?from=from_copylink" target="_blank">tại đây</a></li>
+        <li>Số tiền thuế TNCN được tính dựa trên Thu nhập chịu thuế theo công thức <a href="https://nextcore.sg.larksuite.com/docx/OPSFdZyrDo2EhdxMs6WlAzwRg3c?from=from_copylink" target="_blank">tại đây</a></li>
+    </ul>
+    <div class="center"><i>Mọi thắc mắc/hỏi đáp, vui lòng gửi email/Lark/gọi điện cho <a href="#">Hiền NV</a> trước 10:00 sáng ngày {{ deadline }}. Cảm ơn</i></div>
+</div>
+</body>
+</html>

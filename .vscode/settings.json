@@ -1,0 +1,13 @@
+{
+    "python.analysis.extraPaths": [
+        "./app"
+    ],
+    "cSpell.words": [
+        "asvar",
+        "blocktranslate",
+        "customgroup",
+        "endblocktranslate",
+        "errornote",
+        "fullwidth"
+    ],
+}

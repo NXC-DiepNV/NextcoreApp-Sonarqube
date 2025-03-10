@@ -1,0 +1,81 @@
+{% extends "admin/login.html" %} 
+
+{% load i18n static %}
+
+{% block base %}
+<div class="flex min-h-screen">
+  <div class="flex flex-grow items-center justify-center mx-auto px-4 relative">
+      <div class="w-full sm:w-96">
+          <h1 class="font-semibold mb-10">
+              <span class="block text-font-important-light dark:text-font-important-dark">{% trans 'Welcome back to' %}</span>
+              <span class="block text-primary-600 text-xl dark:text-primary-500">{{ site_title }}</span>
+          </h1>
+
+          {% include "unfold/helpers/messages.html" %}
+
+          {% include "unfold/helpers/messages/errornote.html" with errors=form.errors %}
+
+          {% include "unfold/helpers/messages/error.html" with errors=form.non_field_errors %}
+
+          {% if user.is_authenticated %}
+              {% blocktranslate trimmed asvar message %}
+                  You are authenticated as {{ username }}, but are not authorized to
+                  access this page. Would you like to login to a different account?
+              {% endblocktranslate %}
+
+              {% include "unfold/helpers/messages/error.html" with error=message %}
+          {% endif %}
+
+          {% block login_before %}{% endblock %}
+
+          <form action="{{ app_path }}" method="post" id="login-form">
+              {% csrf_token %}
+
+              {% include "unfold/helpers/field.html" with field=form.username %}
+
+              {% include "unfold/helpers/field.html" with field=form.password %}
+
+              {% url 'admin_password_reset' as password_reset_url %}
+
+              <div class="submit-row">
+                  <button type="submit" class="bg-primary-600 border border-transparent flex flex-row font-semibold group items-center justify-center py-2 rounded-md text-sm text-white w-full">
+                      {% translate 'Log in' %}
+
+                      <i class="material-symbols-outlined ml-2 relative right-0 text-lg transition-all group-hover:-right-1">arrow_forward</i>
+                  </button>
+              </div>
+              <div>
+                <a href="{{ lark_login_url }}" class="mt-2 bg-primary-600 border border-transparent flex flex-row font-semibold group items-center justify-center py-2 rounded-md text-sm text-white w-full">
+                    <img src="https://admin.softmaster.vn/Solution/39865/43923/logo/0logo167291923506411-images-unnamedpng.png" 
+                         class="logo w-4 h-4" alt="Lark Logo">
+                    <button type="button" class="pl-2 text-base font-medium">{% translate 'Log in with Lark' %}</button>
+                </a>
+              </div>
+
+              {% if password_reset_url %}
+                  <div class="password-reset-link">
+                      <a href="{{ password_reset_url }}" class="border font-medium hidden mt-4 px-3 py-2 rounded-md text-center text-sm text-gray-500 transition-all w-full hover:bg-gray-50 lg:block lg:w-auto dark:border-gray-700 dark:text-font-default-dark dark:hover:text-gray-200 dark:hover:bg-gray-900">
+                          {% translate 'Forgotten your password or username?' %}
+                      </a>
+                  </div>
+              {% endif %}
+          </form>
+
+          {% block login_after %}{% endblock %}
+      </div>
+
+      <div class="absolute flex flex-row items-center justify-between left-end m-4 right-0 top-0">
+          {% if not theme %}
+              {% include "unfold/helpers/theme_switch.html" %}
+          {% endif %}
+      </div>
+  </div>
+
+  {% if image %}
+      <div class="bg-cover flex-grow hidden max-w-3xl xl:max-w-4xl xl:block" style="background-image: url('{{ image }}')">
+      </div>
+  {% endif %}
+  
+</div>
+
+{% endblock %}
