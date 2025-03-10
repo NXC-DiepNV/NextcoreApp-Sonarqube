@@ -112,31 +112,38 @@ python manage.py compilemessages
 
     - gtk2.0: sudo apt-get install gtk2.0
 
-# Build project in linux 
+## Build project in linux running gunicorn
 
-## Config running gunicorn
-
+#### Run create static file
 
 ```bash
 B1. python manage.py collectstatic
 ```
 
+#### Run project gunicorn
 ```bash
 B2. gunicorn --bind 0.0.0.0:8000 --pythonpath app [project_name].wsgi:application
 ```
 
-# Build project in docker
+## Build project in docker
 
-## Build project 
+#### Clone source
 
 ```bash
-B1. Clone code from git 
+B1. Clone code from git git@github.com:Nextcore-JSC/NextcoreApp.git
 ```
 
+#### Create file .env
 ```bash
-B2. config file .env
+B2. Copy file env_example and rename to .env
 ```
 
+#### Build docker container
 ```bash
-B3. run: docker compose -d --build
+B3. docker compose -d --build
+```
+
+#### createsuperuser 
+```bash
+B4. docker exec -it [container_name] python manage.py createsuperuser
 ```

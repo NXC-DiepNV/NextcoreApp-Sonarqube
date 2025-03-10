@@ -1,0 +1,32 @@
+version: '1.0'
+services:
+
+  postgres:
+    image: postgres
+    restart: always
+    container_name: nextcore-app-postgres
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./postgres_data:/var/lib/postgresql/data/"
+
+  nextcoreApp:
+    image: nextcore-app-docker
+    container_name: nextcore-app-docker
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      sh -c "python manage.py migrate && python manage.py user_add_groups && 
+      python manage.py coin_add_groups && python manage.py collectstatic && 
+      gunicorn --bind 0.0.0.0:8000 --pythonpath app NextcoreApp.wsgi:application"
+    volumes:
+      - "./data:/data/files"
+    depends_on:
+        - postgres
+    ports:
+      - "8000:8000"
